@@ -1,0 +1,95 @@
+Quel est la meilleure façon de démarrer une tâche avec un agent IA ?
+Définir le contexte, le périmètre et les critères de validation
+*Rédiger un prompt très long sans contexte
+Copier la première solution proposée
+Lancer la commande sans vérification
+
+Quel est le plus important dans un bon prompt de vibe coding ?
+*Le contexte, les contraintes et le résultat attendu
+La longueur maximale du prompt
+Le nombre d’outils utilisés
+Le style visuel du code généré
+
+Quel signe montre qu’un agent IA comprend bien le besoin ?
+*Il propose un plan, des fichiers ciblés et des tests de validation
+Il produit un fichier unique de 1 000 lignes
+Il évite toute explication
+Il supprime la documentation existante
+
+Quelle pratique réduit le plus les bugs en développement assisté ?
+*Écrire un test de régression avant la correction
+Supprimer les tests existants
+Modifier tout d’un coup
+Ignorer le diff final
+
+Quelle méthode est la plus sûre pour un correctif complexe ?
+*Petits incréments avec validation après chaque étape
+Un refactor global immédiat
+Un commit unique sans revue
+Un prompt géant sans vérification
+
+Quel fichier aide le plus à cadrer les conventions d’un projet avec un agent IA ?
+*AGENTS.md ou CLAUDE.md
+Le fichier de licence
+Le fichier package.json seul
+Le fichier de capture d’écran
+
+Que faut-il faire après une modification générée par l’IA ?
+*Exécuter les tests pertinents et relire le diff
+Publier sans validation
+Confier la décision au système
+Ignorer les erreurs de lint
+
+Quel symptôme indique un mauvais usage du vibe coding ?
+*Valider une solution sans comprendre le code généré
+Demander un plan en 3 points
+Choisir un bon nom de variable
+Relire le diff avant le test
+
+Quelle bonne pratique est recommandée pour un prompt d’IA ?
+*Donner le contexte, le périmètre, les erreurs exactes et la cible
+Répéter le même prompt 20 fois
+Ne donner que le nom du fichier
+Utiliser seulement des emojis
+
+Quel est le meilleur usage de GitHub Copilot ou Cursor ?
+*Générer puis vérifier, corriger et réitérer
+Les laisser décider du design sans revue
+Les utiliser comme remplacement total du test
+Les ignorer quand le code compile
+
+Quelle limite des outils IA doit être anticipée ?
+*Ils peuvent inventer des APIs, vérifier trop peu ou conclure sans preuve
+Ils ne peuvent jamais écrire du code
+Ils ne peuvent pas lire des fichiers locaux
+Ils ne fonctionnent qu’en ligne
+
+Quelle bonne pratique favorise la maintenabilité du code ?
+*Conserver des conventions claires, des tests et une documentation concise
+Utiliser des noms de variables très courts partout
+Éviter toute description de fonction
+Ajouter un commentaire par ligne
+
+Quel est l’intérêt d’un plan détaillé avant le codage ?
+*Réduire le risque de sur-implémentation et de régression
+Rendre le prompt plus long que le code
+Supprimer le besoin de tests
+Remplacer tout le design produit
+
+Quelle stratégie est préférable pour une tâche de refactorisation ?
+*Mettre en place un garde-fou, puis refactorer par petits blocs
+Tout réécrire d’un seul coup
+Changer seulement la couleur du code
+Supprimer les fichiers non utilisés sans test
+
+Quel rôle joue une revue humaine dans le vibe coding ?
+*Contrôler la cohérence, les risques et la qualité du résultat final
+Remplacer complètement le test de logique
+Signer automatiquement le code
+Ignorer les erreurs de sécurité
+
+Quand un agent IA est-il le plus utile ?
+*Quand il reçoit une vraie tâche, le contexte, le point d’entrée et le critère de validation
+Quand il doit créer un projet sans aucune consigne
+Quand il n’a aucun fichier à lire
+Quand le projet est déjà entièrement terminé

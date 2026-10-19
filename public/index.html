@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Kaiju</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <div id="conn-banner" class="banner" role="status" hidden>Reconnexion…</div>
+  <div id="toast" class="toast" role="alert" hidden></div>
+
+  <header class="topbar">
+    <a class="brand" href="/">Kaiju</a>
+    <span id="topbar-info" class="topbar-info"></span>
+  </header>
+
+  <main>
+    <!-- Participant : rejoindre -->
+    <section id="view-join" class="view" hidden>
+      <h1>Rejoindre une partie</h1>
+      <form id="join-form" class="stack" novalidate>
+        <label class="field">
+          <span>Code de la partie</span>
+          <input id="join-code" class="code-input" inputmode="numeric" pattern="[0-9]*" maxlength="4"
+                 autocomplete="off" enterkeyhint="next" placeholder="1234" required>
+        </label>
+        <label class="field">
+          <span>Pseudo</span>
+          <input id="join-nick" maxlength="20" autocomplete="nickname" enterkeyhint="go" placeholder="Ton pseudo" required>
+        </label>
+        <p id="join-error" class="form-error" aria-live="polite"></p>
+        <button id="join-btn" type="submit" class="btn primary">Rejoindre</button>
+      </form>
+      <p class="muted center"><a href="/?host">Animer une session</a></p>
+    </section>
+
+    <!-- Animateur : créer la session -->
+    <section id="view-create" class="view wide" hidden>
+      <h1>Créer une session</h1>
+      <label class="field" for="quiz-text"><span>Collez vos questions</span></label>
+      <textarea id="quiz-text" rows="14" spellcheck="false"
+                placeholder="Quelle est la capitale du Cameroun ?&#10;Douala&#10;*Yaoundé&#10;Bafoussam&#10;&#10;Combien font 2 + 2 ? [10s]&#10;3&#10;*4"></textarea>
+      <div class="row">
+        <label class="inline">Durée par défaut
+          <select id="default-time">
+            <option value="10">10 s</option>
+            <option value="20" selected>20 s</option>
+            <option value="30">30 s</option>
+            <option value="45">45 s</option>
+            <option value="60">60 s</option>
+          </select>
+        </label>
+        <button id="example-btn" type="button" class="btn ghost">Insérer un exemple</button>
+      </div>
+      <p id="quiz-status" class="status" aria-live="polite"></p>
+      <pre id="quiz-errors" class="errors" hidden></pre>
+      <button id="create-btn" type="button" class="btn primary" disabled>Créer la session</button>
+      <details class="help">
+        <summary>Format des questions</summary>
+        <ul>
+          <li>Une question par bloc, blocs séparés par une ligne vide.</li>
+          <li>Première ligne : l’énoncé. Lignes suivantes : 2 à 4 réponses.</li>
+          <li>Une seule bonne réponse, marquée d’une étoile : <code>*Yaoundé</code>.</li>
+          <li>Durée optionnelle en fin d’énoncé : <code>[30s]</code> (5 à 240 s).</li>
+          <li>Numéros, puces et préfixes <code>A)</code> <code>B)</code> sont acceptés et retirés.</li>
+          <li>Pour une étoile qui n’indique pas la bonne réponse : <code>\*</code>.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- Animateur : salle d'attente -->
+    <section id="view-host-lobby" class="view wide" hidden>
+      <div class="lobby-head">
+        <div class="lobby-join">
+          <p class="muted">Sur votre téléphone, ouvrez</p>
+          <p id="lobby-url" class="join-url"></p>
+          <p class="muted">puis entrez le code</p>
+          <p id="lobby-code" class="big-code"></p>
+        </div>
+        <img id="lobby-qr" class="qr" alt="QR code pour rejoindre la partie" width="240" height="240">
+      </div>
+      <div class="row spread">
+        <h2><span id="lobby-count">0</span> participant(s)</h2>
+        <button id="start-btn" type="button" class="btn primary" disabled>Démarrer</button>
+      </div>
+      <ul id="lobby-players" class="chips" aria-live="polite"></ul>
+      <p class="note">Les parties sont gardées en mémoire : ne fermez pas le serveur pendant la séance.</p>
+    </section>
+
+    <!-- Animateur : question en cours -->
+    <section id="view-host-question" class="view wide" hidden>
+      <div class="q-head">
+        <span id="hq-counter" class="counter"></span>
+        <span id="hq-timer" class="timer host-timer" aria-hidden="true"></span>
+      </div>
+      <h1 id="hq-text" class="q-text host-q"></h1>
+      <div id="hq-choices" class="choices static"></div>
+      <div class="row spread">
+        <span id="hq-progress" class="progress-text" aria-live="polite"></span>
+        <button id="close-btn" type="button" class="btn">Afficher les résultats</button>
+      </div>
+    </section>
+
+    <!-- Animateur : correction -->
+    <section id="view-host-reveal" class="view wide" hidden>
+      <p id="hr-counter" class="counter"></p>
+      <h1 id="hr-text" class="q-text"></h1>
+      <div id="hr-bars" class="bars"></div>
+      <h2>Classement</h2>
+      <ol id="hr-board" class="board"></ol>
+      <div class="row spread">
+        <button id="end-btn" type="button" class="btn ghost">Terminer la partie</button>
+        <button id="next-btn" type="button" class="btn primary">Question suivante</button>
+      </div>
+    </section>
+
+    <!-- Animateur : podium -->
+    <section id="view-host-podium" class="view wide" hidden>
+      <h1 class="center">Podium</h1>
+      <div id="podium" class="podium"></div>
+      <h2>Classement complet</h2>
+      <ol id="final-board" class="board"></ol>
+      <button id="new-btn" type="button" class="btn">Nouvelle session</button>
+    </section>
+
+    <!-- Participant : en attente -->
+    <section id="view-wait" class="view center" hidden>
+      <p class="muted">Partie <span id="wait-code"></span></p>
+      <h1>Tu es dans la partie</h1>
+      <p id="wait-nick" class="nick"></p>
+      <p id="wait-msg">Attends le lancement par l’animateur.</p>
+      <p id="wait-count" class="muted"></p>
+    </section>
+
+    <!-- Participant : question -->
+    <section id="view-play" class="view play" hidden>
+      <div class="q-head">
+        <span id="pq-counter" class="counter"></span>
+        <span id="pq-timer" class="timer" aria-hidden="true"></span>
+      </div>
+      <span id="pq-timer-sr" class="sr-only" aria-live="polite"></span>
+      <h1 id="pq-text" class="q-text phone-q"></h1>
+      <div id="pq-choices" class="choices"></div>
+      <p id="pq-status" class="status center" aria-live="polite"></p>
+    </section>
+
+    <!-- Participant : résultat de la question -->
+    <section id="view-result" class="view center" hidden>
+      <p id="pr-verdict" class="verdict"></p>
+      <p id="pr-points" class="points"></p>
+      <p id="pr-answer" class="muted"></p>
+      <p class="score-line">Score <strong id="pr-score"></strong> · Rang <strong id="pr-rank"></strong></p>
+      <p class="muted">Regarde l’écran de l’animateur pour la suite.</p>
+    </section>
+
+    <!-- Participant : fin de partie -->
+    <section id="view-final" class="view center" hidden>
+      <p class="muted">Partie terminée</p>
+      <p id="pf-rank" class="final-rank"></p>
+      <p id="pf-score" class="score-line"></p>
+      <h2>Podium</h2>
+      <ol id="pf-top" class="board"></ol>
+      <a href="/" id="pf-again" class="btn">Rejoindre une autre partie</a>
+    </section>
+  </main>
+</body>
+</html>
