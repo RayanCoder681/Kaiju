@@ -3,6 +3,13 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { config } from './config.js';
 import { logger } from './lib/logger.js';
+import { authRouter } from './modules/auth/routes.js';
+import { sessionsRouter } from './modules/sessions/routes.js';
+import { joinRouter, hostParticipantsRouter } from './modules/participants/routes.js';
+import {
+  activitiesRouter,
+  sessionActivitiesRouter,
+} from './modules/activities/routes.js';
 
 /**
  * Fabrique l'application Express.
@@ -27,6 +34,14 @@ export function createApp(): Express {
       version: '0.1.0',
     });
   });
+
+  // API — routeurs métier (montés avant le repli SPA).
+  app.use('/api/auth', authRouter);
+  app.use('/api/join', joinRouter);
+  app.use('/api/activities', activitiesRouter);
+  app.use('/api/sessions', sessionsRouter);
+  app.use('/api/sessions', sessionActivitiesRouter);
+  app.use('/api/sessions', hostParticipantsRouter);
 
   // Service du client compilé (parcours local-first mono-port).
   // En développement, le client tourne sur Vite ; en production/démo, il est servi ici.

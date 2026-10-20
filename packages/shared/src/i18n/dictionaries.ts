@@ -39,6 +39,7 @@ export const DICTIONARIES = {
 
     'error.codeInvalid': 'Code de session invalide',
     'error.sessionClosed': 'Cette session est terminée',
+    'error.sessionNotStarted': "La session n'a pas encore démarré",
     'error.sessionLocked': "Une activité est en cours, l'entrée est momentanément verrouillée",
     'error.activityNotRunning': "L'activité n'accepte pas de réponse actuellement",
     'error.deadlinePassed': 'Le délai est dépassé, réponse refusée',
@@ -87,6 +88,7 @@ export const DICTIONARIES = {
 
     'error.codeInvalid': 'Invalid session code',
     'error.sessionClosed': 'This session has ended',
+    'error.sessionNotStarted': "The session hasn't started yet",
     'error.sessionLocked': 'An activity is running, joining is temporarily locked',
     'error.activityNotRunning': 'The activity is not accepting answers right now',
     'error.deadlinePassed': 'The deadline has passed, answer refused',

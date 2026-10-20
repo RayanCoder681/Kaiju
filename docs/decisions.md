@@ -50,3 +50,15 @@ Chaque entrée : contexte → décision → conséquence.
 - **Contexte** : fonctionnement LAN sans Internet, QR accessible aux smartphones.
 - **Décision** : en production/démo, le serveur Express sert le client compilé sur le même port ; détection IP LAN + QR vers l'URL LAN (jamais `localhost`). En développement, Vite proxifie `/api` et `/socket.io` vers le serveur.
 - **Conséquence** : une seule origine côté navigateur, pas de CORS large, une seule adresse à communiquer aux participants.
+
+## ADR-009 — Authentification organisateur : cookie opaque + bcrypt
+
+- **Contexte** : un seul compte organisateur local, pas de fournisseur externe, parcours LAN HTTP.
+- **Décision** : mot de passe haché bcrypt (bcryptjs) ; à la connexion, jeton opaque aléatoire (32 octets) persisté en table `auth_session` avec expiration (12 h) ; cookie `kaiju_sid` httpOnly, SameSite=Lax. Autorisation vérifiée côté serveur à chaque action admin (`requireHost`). Premier démarrage : endpoint `setup` autorisé uniquement si aucun compte n'existe.
+- **Conséquence** : pas de JWT ni de dépendance de session lourde ; révocation immédiate (suppression du jeton). `secure` à activer derrière HTTPS lors d'un éventuel déploiement en ligne.
+
+## ADR-010 — Snapshots d'activité indépendants de la bibliothèque
+
+- **Contexte** : règle d'historique immuable — modifier une activité de bibliothèque ne doit pas altérer les sessions passées.
+- **Décision** : attacher une activité à une session copie sa définition dans `session_activity.snapshot_json` ; la bibliothèque est marquée `used` et n'est plus éditable directement (duplication obligatoire pour corriger).
+- **Conséquence** : chaque session conserve une copie figée ; vérifié par test (le snapshot ne change pas après modification d'une copie de bibliothèque).

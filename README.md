@@ -68,7 +68,8 @@ npm run migrate     # applique les migrations SQLite
 - [x] **Phase 0** — Inspection, décisions, point de contrôle Git.
 - [x] **Phase 1** — Fondations : monorepo, types/contrats partagés, thèmes white + noir-ardoise,
       migrations SQLite, boot serveur + Socket.IO, routage 3 surfaces, i18n FR/EN, script de lancement.
-- [ ] **Phase 2** — MVP : auth organisateur, sessions, code/QR, quiz/sondage/Q&A, persistance.
+- [x] **Phase 2** — MVP : auth organisateur (bcrypt, cookie), sessions + cycle de vie, code/QR LAN,
+      entrée/reconnexion participant, bibliothèque d'activités + snapshots, quiz persistés. 3 surfaces câblées.
 - [ ] **Phase 3** — Temps réel : synchronisation, minuteries serveur, scores, reconnexion.
 - [ ] **Phase 4** — Résilience & sécurité : sauvegardes, limites, diagnostic, charge.
 - [ ] **Phase 5** — Compléments : bibliothèque, import/export, archivage, médias, rapports.

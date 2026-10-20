@@ -21,8 +21,12 @@ function ts(): string {
   return new Date().toISOString();
 }
 
+/** Mode silencieux (info/warn) pendant les tests pour garder une sortie lisible. */
+const QUIET = process.env.VITEST === 'true' || process.env.NODE_ENV === 'test';
+
 export const logger = {
   info(message: string, meta?: unknown): void {
+    if (QUIET) return;
     if (meta === undefined) console.log(`[${ts()}] INFO  ${message}`);
     else console.log(`[${ts()}] INFO  ${message}`, redact(meta));
   },
