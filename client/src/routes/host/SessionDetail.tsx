@@ -10,7 +10,7 @@ import {
   type ActivityState,
   type AggregateResults,
 } from '@kaiju/shared';
-import { QuizQuickForm } from './QuizQuickForm.js';
+import { ActivityEditor } from './ActivityEditor.js';
 
 interface SessionView {
   id: string;
@@ -273,7 +273,25 @@ export function SessionDetail() {
           </div>
         )}
 
-        <QuizQuickForm sessionId={id} onAdded={loadActivities} />
+        <ActivityEditor sessionId={id} onAdded={loadActivities} />
+      </Card>
+
+      <Card>
+        <h2 className="mb-3 font-mono text-xs uppercase tracking-wider text-muted">Rapport & export</h2>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href={`/api/sessions/${id}/export/results.csv`}
+            className="rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-fg hover:bg-surface-elevated"
+          >
+            Export résultats (CSV)
+          </a>
+          <a
+            href={`/api/sessions/${id}/export/bundle.json`}
+            className="rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-fg hover:bg-surface-elevated"
+          >
+            Export complet (JSON)
+          </a>
+        </div>
       </Card>
 
       <RankingCard sessionId={id} />

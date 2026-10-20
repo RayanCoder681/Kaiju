@@ -275,6 +275,15 @@ export function makeRepositories(db: Database.Database) {
           .prepare('SELECT payload_json FROM answer WHERE session_activity_id = ?')
           .all(sacId) as { payload_json: string }[];
       },
+      /** Score total par participant pour UNE activité (export CSV par colonne). */
+      rankingRowsForActivity(sessionActivityId: string): { pid: string; total: number }[] {
+        return db
+          .prepare(
+            `SELECT participant_id AS pid, COALESCE(SUM(score),0) AS total
+               FROM answer WHERE session_activity_id = ? GROUP BY participant_id`,
+          )
+          .all(sessionActivityId) as { pid: string; total: number }[];
+      },
       rankingRows(sessionId: string): { pid: string; total: number; time: number }[] {
         return db
           .prepare(

@@ -12,6 +12,8 @@ import {
 } from './modules/activities/routes.js';
 import { teamsRouter } from './modules/teams/routes.js';
 import { maintenanceRouter } from './modules/maintenance/routes.js';
+import { exchangeRouter } from './modules/exchange/routes.js';
+import { mediaUploadRouter, mediaPublicRouter } from './modules/media/routes.js';
 
 /**
  * Fabrique l'application Express.
@@ -46,6 +48,9 @@ export function createApp(): Express {
   app.use('/api/sessions', hostParticipantsRouter);
   app.use('/api/sessions', teamsRouter);
   app.use('/api/maintenance', maintenanceRouter);
+  app.use('/api', exchangeRouter);
+  app.use('/api/media', mediaUploadRouter);
+  app.use('/api/media', mediaPublicRouter);
 
   // Service du client compilé (parcours local-first mono-port).
   // En développement, le client tourne sur Vite ; en production/démo, il est servi ici.

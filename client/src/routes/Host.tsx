@@ -5,6 +5,7 @@ import { Login } from './host/Login.js';
 import { Dashboard } from './host/Dashboard.js';
 import { SessionDetail } from './host/SessionDetail.js';
 import { Diagnostics } from './host/Diagnostics.js';
+import { Library } from './host/Library.js';
 
 /** Console organisateur : gating d'authentification + routage interne. */
 export function Host() {
@@ -24,6 +25,7 @@ export function Host() {
         />
         <Route path="sessions/:id" element={<SessionDetail />} />
         <Route path="diagnostics" element={<Diagnostics />} />
+        <Route path="library" element={<Library />} />
       </Routes>
     );
   }

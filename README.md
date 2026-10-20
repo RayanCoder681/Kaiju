@@ -76,7 +76,9 @@ npm run migrate     # applique les migrations SQLite
 - [x] **Phase 4** — Résilience & sécurité : sauvegardes (manuelles + auto) et métadonnées,
       reprise après incident (clôture des minuteurs expirés), limites configurables, rate-limiting,
       panneau diagnostic, test de charge ~40 participants simulés. Restauration : procédure manuelle (voir ci-dessous).
-- [ ] **Phase 5** — Compléments : bibliothèque, import/export, archivage, médias, rapports.
+- [x] **Phase 5** — Compléments : éditeur quiz/sondage/Q&A complet, bibliothèque (recherche, duplication,
+      import/export JSON validé), export CSV/JSON des résultats, rapport de session, upload de médias
+      (validation du type réel par signature).
 - [ ] **Phase 6** — Livraison : docs, guide Windows, démo reproductible, rapport de tests.
 
 ## Sauvegarde & restauration

@@ -49,6 +49,12 @@ export function Dashboard({ organizerName }: { organizerName: string }) {
         </div>
         <div className="flex gap-2">
           <Link
+            to="/host/library"
+            className="rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-fg transition-colors hover:bg-surface-elevated"
+          >
+            Bibliothèque
+          </Link>
+          <Link
             to="/host/diagnostics"
             className="rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-fg transition-colors hover:bg-surface-elevated"
           >

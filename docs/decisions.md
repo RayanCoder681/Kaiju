@@ -80,3 +80,9 @@ Chaque entrée : contexte → décision → conséquence.
 - **Contexte** : protéger les actions exposées aux participants sans sur-ingénierie ni dépendance (Redis).
 - **Décision** : limites configurables par variables d'environnement (capacité par session non désactivable par l'organisateur, tailles, quotas) ; rate-limiter à fenêtre glissante en mémoire, par IP pour l'entrée et par participant pour les soumissions/votes.
 - **Conséquence** : protection proportionnée et locale. Le limiteur d'entrée est par IP : en LAN chaque appareil a une IP distincte ; une charge simulée mono-machine doit relever le quota.
+
+## ADR-014 — Import/export & upload de médias sûrs
+
+- **Contexte** : échanger activités et résultats (CSV/JSON), afficher des images, sans exécuter de contenu importé ni accepter de fichier malveillant.
+- **Décision** : export CSV (BOM UTF-8, RFC 4180) des scores par participant ; export JSON versionné des activités et bundle de session ; import JSON validé élément par élément (Zod + intégrité quiz), doublons et erreurs par ligne signalés, jamais d'exécution (simple JSON.parse). Médias : upload en mémoire puis validation du TYPE RÉEL par signature (magic bytes) avant écriture — l'extension n'est jamais de confiance ; taille bornée par `MAX_IMAGE_BYTES`.
+- **Conséquence** : échanges interopérables (Excel/Sheets/Python) ; surface d'attaque réduite (un script renommé .png est refusé, vérifié au runtime).
