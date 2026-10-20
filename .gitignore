@@ -1,0 +1,38 @@
+# Dépendances
+node_modules/
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+
+# Base de données locale & sauvegardes (ne jamais versionner les données réelles)
+data/
+*.sqlite
+*.sqlite3
+*.db
+backups/
+
+# Médias uploadés par l'organisateur
+uploads/
+server/uploads/
+
+# Environnement / secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Tests
+coverage/

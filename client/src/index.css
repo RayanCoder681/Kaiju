@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Variables de thème Kaiju.
+  Valeurs alignées sur packages/shared/src/theme/tokens.ts (source de vérité,
+  parité vérifiée par theme.test.ts). Le basculement se fait via data-theme sur <html>.
+  Polices auto-hébergées à ajouter en Phase 5/6 ; repli système d'ici là (pas de CDN).
+*/
+
+:root,
+:root[data-theme='white'] {
+  --kj-color-bg: #f8fafc;
+  --kj-color-surface: #ffffff;
+  --kj-color-surface-elevated: #f1f5f9;
+  --kj-color-border: #e2e8f0;
+  --kj-color-text: #0f172a;
+  --kj-color-text-muted: #64748b;
+  --kj-color-brand: #16a34a;
+  --kj-color-brand-hover: #15803d;
+  --kj-color-brand-contrast: #ffffff;
+  --kj-color-brand-soft: #dcfce7;
+  --kj-color-accent: #6366f1;
+  --kj-color-danger: #dc2626;
+  --kj-color-success: #16a34a;
+  --kj-color-warning: #d97706;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --kj-color-bg: #0b0f14; /* noir-ardoise */
+  --kj-color-surface: #111820;
+  --kj-color-surface-elevated: #1a232d;
+  --kj-color-border: #26323e;
+  --kj-color-text: #e6edf3;
+  --kj-color-text-muted: #8b9aa7;
+  --kj-color-brand: #22c55e;
+  --kj-color-brand-hover: #16a34a;
+  --kj-color-brand-contrast: #04120a;
+  --kj-color-brand-soft: rgba(34, 197, 94, 0.14);
+  --kj-color-accent: #818cf8;
+  --kj-color-danger: #f87171;
+  --kj-color-success: #22c55e;
+  --kj-color-warning: #fbbf24;
+  color-scheme: dark;
+}
+
+/* Si aucune préférence stockée, suivre le système pour le premier rendu. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='white']):not([data-theme='dark']) {
+    --kj-color-bg: #0b0f14;
+    --kj-color-surface: #111820;
+    --kj-color-surface-elevated: #1a232d;
+    --kj-color-border: #26323e;
+    --kj-color-text: #e6edf3;
+    --kj-color-text-muted: #8b9aa7;
+    --kj-color-brand: #22c55e;
+    --kj-color-brand-hover: #16a34a;
+    --kj-color-brand-contrast: #04120a;
+    --kj-color-brand-soft: rgba(34, 197, 94, 0.14);
+    --kj-color-accent: #818cf8;
+    --kj-color-danger: #f87171;
+    --kj-color-success: #22c55e;
+    --kj-color-warning: #fbbf24;
+    color-scheme: dark;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--kj-color-bg);
+  color: var(--kj-color-text);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Respect de la réduction de mouvement (accessibilité). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

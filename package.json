@@ -1,0 +1,30 @@
+{
+  "name": "kaiju",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kaiju — application web de participation interactive en temps réel pour conférences, cours et ateliers (local-first).",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "workspaces": [
+    "packages/shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "build:shared": "npm run build --workspace @kaiju/shared",
+    "build:server": "npm run build --workspace @kaiju/server",
+    "build:client": "npm run build --workspace @kaiju/client",
+    "build": "npm run build:shared && npm run build:server && npm run build:client",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "migrate": "npm run migrate --workspace @kaiju/server",
+    "dev:server": "npm run dev --workspace @kaiju/server",
+    "dev:client": "npm run dev --workspace @kaiju/client",
+    "start": "node scripts/start.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3"
+  }
+}
