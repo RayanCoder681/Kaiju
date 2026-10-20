@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { api, ApiError } from '../lib/api.js';
 import { Shell } from '../ui/Shell.js';
 import { useI18n } from '../ui/I18nProvider.js';
-import { Card, Button, Input, Field, Badge } from '../ui/primitives.js';
+import { Card, Button, Input, Field } from '../ui/primitives.js';
+import { ParticipantLive } from './participant/ParticipantLive.js';
 import type { MessageKey, SessionState } from '@kaiju/shared';
 
 interface Joined {
@@ -108,14 +109,12 @@ export function Join() {
         )}
 
         {joined && (
-          <div className="text-center">
-            <Badge>{joined.pseudonym}</Badge>
-            <h1 className="mt-4 font-display text-2xl font-bold tracking-tight">{joined.session.title}</h1>
-            <p className="mt-2 text-muted">{t('join.waiting')}</p>
-            <p className="mt-6 font-mono text-xs uppercase tracking-wider text-muted">
-              {t(`session.state.${joined.session.state}` as const)}
-            </p>
-          </div>
+          <ParticipantLive
+            code={code}
+            reconnectToken={joined.reconnectToken}
+            pseudonym={joined.pseudonym}
+            sessionTitle={joined.session.title}
+          />
         )}
       </div>
     </Shell>

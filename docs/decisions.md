@@ -62,3 +62,9 @@ Chaque entrée : contexte → décision → conséquence.
 - **Contexte** : règle d'historique immuable — modifier une activité de bibliothèque ne doit pas altérer les sessions passées.
 - **Décision** : attacher une activité à une session copie sa définition dans `session_activity.snapshot_json` ; la bibliothèque est marquée `used` et n'est plus éditable directement (duplication obligatoire pour corriger).
 - **Conséquence** : chaque session conserve une copie figée ; vérifié par test (le snapshot ne change pas après modification d'une copie de bibliothèque).
+
+## ADR-011 — Temps réel à autorité serveur (Socket.IO)
+
+- **Contexte** : synchroniser 3 surfaces, garantir délais, idempotence, visibilité et refus des réponses tardives.
+- **Décision** : moteur pur et testable (`realtime/engine.ts`) — démarrage/clôture, horloge (`tickActivity`), scoring, agrégation, classements — piloté par une couche Socket.IO fine (`realtime/socket.ts`). Salles par surface (`host:` / `part:` / `proj:`) pour isoler les résultats non publiés. Horloge globale (1 s) qui bascule countdown→running→closed à l'échéance officielle. Soumissions revalidées Zod, persistées AVANT accusé, uniques par (activité, participant) ; réponse tardive refusée même après reconnexion.
+- **Conséquence** : le client n'a aucune autorité ; la logique est testée unitairement (moteur) et sur le fil (socket.io-client). La visibilité des corrigés est strictement contrôlée par salle.

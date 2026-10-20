@@ -154,6 +154,27 @@ export function makeRepositories(db: Database.Database) {
       },
     },
 
+    team: {
+      create(id: string, sessionId: string, name: string, now: number): void {
+        db.prepare('INSERT INTO team (id, session_id, name, created_at) VALUES (?,?,?,?)').run(
+          id,
+          sessionId,
+          name,
+          now,
+        );
+      },
+      listBySession(sessionId: string): { id: string; name: string }[] {
+        return db
+          .prepare('SELECT id, name FROM team WHERE session_id = ? ORDER BY created_at')
+          .all(sessionId) as { id: string; name: string }[];
+      },
+      findById(id: string): { id: string; session_id: string; name: string } | undefined {
+        return db.prepare('SELECT id, session_id, name FROM team WHERE id = ?').get(id) as
+          | { id: string; session_id: string; name: string }
+          | undefined;
+      },
+    },
+
     participant: {
       create(row: ParticipantRow): void {
         db.prepare(
@@ -190,6 +211,10 @@ export function makeRepositories(db: Database.Database) {
           id,
         );
       },
+      /** Affecte un participant à une équipe. Ne touche ni ses réponses ni ses scores. */
+      assignTeam(id: string, teamId: string | null): void {
+        db.prepare('UPDATE participant SET team_id = ? WHERE id = ?').run(teamId, id);
+      },
     },
 
     activityLibrary: {
@@ -219,6 +244,52 @@ export function makeRepositories(db: Database.Database) {
       },
     },
 
+    answer: {
+      findByParticipant(
+        sacId: string,
+        participantId: string,
+      ): { client_submission_id: string } | undefined {
+        return db
+          .prepare(
+            'SELECT client_submission_id FROM answer WHERE session_activity_id = ? AND participant_id = ?',
+          )
+          .get(sacId, participantId) as { client_submission_id: string } | undefined;
+      },
+      insert(row: {
+        id: string;
+        session_activity_id: string;
+        participant_id: string;
+        client_submission_id: string;
+        payload_json: string;
+        score: number | null;
+        answer_time_ms: number;
+        created_at: number;
+      }): void {
+        db.prepare(
+          `INSERT INTO answer (id, session_activity_id, participant_id, client_submission_id, payload_json, score, answer_time_ms, created_at)
+           VALUES (@id,@session_activity_id,@participant_id,@client_submission_id,@payload_json,@score,@answer_time_ms,@created_at)`,
+        ).run(row);
+      },
+      listPayloads(sacId: string): { payload_json: string }[] {
+        return db
+          .prepare('SELECT payload_json FROM answer WHERE session_activity_id = ?')
+          .all(sacId) as { payload_json: string }[];
+      },
+      rankingRows(sessionId: string): { pid: string; total: number; time: number }[] {
+        return db
+          .prepare(
+            `SELECT a.participant_id AS pid,
+                    COALESCE(SUM(a.score), 0) AS total,
+                    COALESCE(SUM(a.answer_time_ms), 0) AS time
+               FROM answer a
+               JOIN session_activity sa ON sa.id = a.session_activity_id
+              WHERE sa.session_id = ?
+              GROUP BY a.participant_id`,
+          )
+          .all(sessionId) as { pid: string; total: number; time: number }[];
+      },
+    },
+
     sessionActivity: {
       create(row: SessionActivityRow): void {
         db.prepare(
@@ -243,6 +314,15 @@ export function makeRepositories(db: Database.Database) {
           .prepare('SELECT COALESCE(MAX(position), -1) AS maxPos FROM session_activity WHERE session_id = ?')
           .get(sessionId) as { maxPos: number };
         return row.maxPos + 1;
+      },
+      /** Sessions ayant une activité en décompte ou en cours (pour l'horloge globale). */
+      activeSessionIds(): string[] {
+        const rows = db
+          .prepare(
+            "SELECT DISTINCT session_id FROM session_activity WHERE state IN ('countdown','running')",
+          )
+          .all() as { session_id: string }[];
+        return rows.map((r) => r.session_id);
       },
       /** Activité actuellement non terminée (décompte/en cours/en pause) d'une session. */
       currentLocking(sessionId: string): SessionActivityRow | undefined {

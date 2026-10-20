@@ -70,7 +70,9 @@ npm run migrate     # applique les migrations SQLite
       migrations SQLite, boot serveur + Socket.IO, routage 3 surfaces, i18n FR/EN, script de lancement.
 - [x] **Phase 2** — MVP : auth organisateur (bcrypt, cookie), sessions + cycle de vie, code/QR LAN,
       entrée/reconnexion participant, bibliothèque d'activités + snapshots, quiz persistés. 3 surfaces câblées.
-- [ ] **Phase 3** — Temps réel : synchronisation, minuteries serveur, scores, reconnexion.
+- [x] **Phase 3** — Temps réel : synchronisation des 3 surfaces (Socket.IO), minuteries à autorité
+      serveur, visibilité des résultats, scores + classements individuel/équipe, pause/reprise,
+      reconnexion, idempotence et refus des réponses tardives, Q&A en direct.
 - [ ] **Phase 4** — Résilience & sécurité : sauvegardes, limites, diagnostic, charge.
 - [ ] **Phase 5** — Compléments : bibliothèque, import/export, archivage, médias, rapports.
 - [ ] **Phase 6** — Livraison : docs, guide Windows, démo reproductible, rapport de tests.

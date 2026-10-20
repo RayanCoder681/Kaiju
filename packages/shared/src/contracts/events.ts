@@ -78,10 +78,17 @@ export interface ClientToServerEvents {
     p: { activityId: string; toProjection: boolean },
     cb: (r: Ack) => void,
   ) => void;
+  'host:qa:moderate': (p: unknown, cb: (r: Ack) => void) => void;
   'participant:quiz:submit': (p: unknown, cb: (r: Ack) => void) => void;
   'participant:poll:submit': (p: unknown, cb: (r: Ack) => void) => void;
   'participant:qa:submit': (p: unknown, cb: (r: Ack) => void) => void;
   'participant:qa:vote': (p: unknown, cb: (r: Ack) => void) => void;
+  'host:hello': (p: { sessionId: string }, cb: (r: Ack) => void) => void;
+  'participant:hello': (
+    p: { code: string; reconnectToken: string },
+    cb: (r: Ack & { participantId?: string }) => void,
+  ) => void;
+  'projection:hello': (p: { code: string }, cb: (r: Ack) => void) => void;
 }
 
 /** Accusé de réception générique d'une commande temps réel. */

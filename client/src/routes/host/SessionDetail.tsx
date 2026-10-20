@@ -1,9 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../../lib/api.js';
+import { connectSocket, emitAck, type KaijuSocket } from '../../lib/socket.js';
 import { useI18n } from '../../ui/I18nProvider.js';
 import { Card, Button, Badge } from '../../ui/primitives.js';
-import { SESSION_TRANSITIONS, type SessionState, type ActivityState } from '@kaiju/shared';
+import {
+  SESSION_TRANSITIONS,
+  type SessionState,
+  type ActivityState,
+  type AggregateResults,
+} from '@kaiju/shared';
 import { QuizQuickForm } from './QuizQuickForm.js';
 
 interface SessionView {
@@ -48,6 +54,8 @@ export function SessionDetail() {
   const [conn, setConn] = useState<Connection | null>(null);
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [activities, setActivities] = useState<ActivityView[]>([]);
+  const [liveResults, setLiveResults] = useState<AggregateResults | null>(null);
+  const socketRef = useRef<KaijuSocket | null>(null);
 
   const loadSession = useCallback(async () => {
     const s = await api.get<{ session: SessionView }>(`/api/sessions/${id}`);
@@ -75,12 +83,29 @@ export function SessionDetail() {
     void loadActivities();
   }, [loadSession, loadConnection, loadActivities]);
 
-  // Rafraîchissement léger de la présence (le temps réel arrive en Phase 3).
+  // Connexion temps réel organisateur : présence, activité et résultats en direct.
   useEffect(() => {
     void loadParticipants();
-    const timer = setInterval(() => void loadParticipants(), 4000);
-    return () => clearInterval(timer);
-  }, [loadParticipants]);
+    const socket = connectSocket();
+    socketRef.current = socket;
+    socket.on('connect', () => void emitAck(socket, 'host:hello', { sessionId: id }));
+    socket.on('participants:update', ({ items }) => {
+      if (items) setParticipants(items);
+    });
+    socket.on('results:update', (r) => setLiveResults(r));
+    socket.on('activity:changed', () => {
+      setLiveResults(null);
+      void loadActivities();
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, [id, loadParticipants, loadActivities]);
+
+  const control = async (event: string, payload: unknown): Promise<void> => {
+    if (socketRef.current) await emitAck(socketRef.current, event, payload);
+    await loadActivities();
+  };
 
   const transition = async (to: SessionState): Promise<void> => {
     if ((to === 'closed' || to === 'cancelled') && !confirm(`Confirmer : ${TRANSITION_LABELS[to]} la session ?`)) {
@@ -176,19 +201,144 @@ export function SessionDetail() {
           <Badge>{activities.length}</Badge>
         </div>
         {activities.length > 0 && (
-          <ul className="mb-4 space-y-1 text-sm">
+          <ul className="mb-4 space-y-2 text-sm">
             {activities.map((a) => (
-              <li key={a.id} className="flex items-center justify-between rounded-md bg-surface-elevated px-3 py-2">
-                <span>
-                  <span className="font-mono text-xs text-muted">{a.type}</span> — {a.snapshot.title}
-                </span>
-                <Badge tone="muted">{t(`activity.state.${a.state}` as const)}</Badge>
+              <li key={a.id} className="rounded-md bg-surface-elevated px-3 py-2">
+                <div className="flex items-center justify-between">
+                  <span>
+                    <span className="font-mono text-xs text-muted">{a.type}</span> — {a.snapshot.title}
+                  </span>
+                  <Badge tone={a.state === 'running' ? 'brand' : 'muted'}>
+                    {t(`activity.state.${a.state}` as const)}
+                  </Badge>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {(a.state === 'prepared') && (
+                    <Button onClick={() => control('host:activity:start', { activityId: a.id })}>
+                      Démarrer
+                    </Button>
+                  )}
+                  {a.state === 'running' && (
+                    <>
+                      <Button variant="secondary" onClick={() => control('host:activity:pause', { activityId: a.id })}>
+                        Pause
+                      </Button>
+                      <Button variant="danger" onClick={() => control('host:activity:close', { activityId: a.id })}>
+                        Clôturer
+                      </Button>
+                    </>
+                  )}
+                  {a.state === 'paused' && (
+                    <Button onClick={() => control('host:activity:resume', { activityId: a.id })}>
+                      Reprendre
+                    </Button>
+                  )}
+                  {a.state === 'closed' && (
+                    <Button
+                      variant="secondary"
+                      onClick={() => control('host:results:publish', { activityId: a.id, toProjection: true })}
+                    >
+                      Publier sur la projection
+                    </Button>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
         )}
+
+        {liveResults && (
+          <div className="mb-4 rounded-md border border-border p-3">
+            <p className="mb-2 font-mono text-xs uppercase tracking-wider text-muted">
+              Résultats en direct — {liveResults.totalResponses} réponse(s)
+            </p>
+            {liveResults.choiceCounts?.map((count, i) => (
+              <div key={i} className="mb-1 flex items-center gap-2 text-sm">
+                <span className="w-6 font-mono text-xs text-muted">{i + 1}</span>
+                <div className="h-4 flex-1 overflow-hidden rounded bg-surface-elevated">
+                  <div
+                    className={`h-full ${liveResults.correctIndexes?.includes(i) ? 'bg-success' : 'bg-brand'}`}
+                    style={{
+                      width: `${
+                        liveResults.totalResponses > 0
+                          ? Math.round((count / liveResults.totalResponses) * 100)
+                          : 0
+                      }%`,
+                    }}
+                  />
+                </div>
+                <span className="w-8 text-right font-mono text-xs">{count}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         <QuizQuickForm sessionId={id} onAdded={loadActivities} />
       </Card>
+
+      <RankingCard sessionId={id} />
     </div>
+  );
+}
+
+function RankingCard({ sessionId }: { sessionId: string }) {
+  const [individual, setIndividual] = useState<{ pseudonym: string; totalScore: number }[]>([]);
+  const [teams, setTeams] = useState<{ name: string; totalScore: number }[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  const load = async (): Promise<void> => {
+    const r = await api.get<{
+      individual: { pseudonym: string; totalScore: number }[];
+      teams: { name: string; totalScore: number }[];
+    }>(`/api/sessions/${sessionId}/ranking`);
+    setIndividual(r.individual);
+    setTeams(r.teams);
+    setLoaded(true);
+  };
+
+  return (
+    <Card>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="font-mono text-xs uppercase tracking-wider text-muted">Classement</h2>
+        <Button variant="secondary" onClick={load}>
+          Rafraîchir
+        </Button>
+      </div>
+      {!loaded ? (
+        <p className="text-sm text-muted">Chargez le classement calculé côté serveur.</p>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <p className="mb-2 font-mono text-xs uppercase tracking-wider text-brand">Individuel</p>
+            <ol className="space-y-1 text-sm">
+              {individual.slice(0, 10).map((e, i) => (
+                <li key={i} className="flex justify-between">
+                  <span>
+                    {i + 1}. {e.pseudonym}
+                  </span>
+                  <span className="font-mono">{e.totalScore}</span>
+                </li>
+              ))}
+              {individual.length === 0 && <li className="text-muted">Aucun score.</li>}
+            </ol>
+          </div>
+          {teams.length > 0 && (
+            <div>
+              <p className="mb-2 font-mono text-xs uppercase tracking-wider text-brand">Équipes</p>
+              <ol className="space-y-1 text-sm">
+                {teams.map((e, i) => (
+                  <li key={i} className="flex justify-between">
+                    <span>
+                      {i + 1}. {e.name}
+                    </span>
+                    <span className="font-mono">{e.totalScore}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
   );
 }
