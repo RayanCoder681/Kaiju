@@ -24,6 +24,14 @@ function ts(): string {
 /** Mode silencieux (info/warn) pendant les tests pour garder une sortie lisible. */
 const QUIET = process.env.VITEST === 'true' || process.env.NODE_ENV === 'test';
 
+/** Tampon circulaire des dernières erreurs (sans secret) pour le panneau diagnostic. */
+const recentErrors: { at: number; message: string }[] = [];
+const MAX_RECENT = 20;
+
+export function getRecentErrors(): { at: number; message: string }[] {
+  return [...recentErrors];
+}
+
 export const logger = {
   info(message: string, meta?: unknown): void {
     if (QUIET) return;
@@ -31,10 +39,13 @@ export const logger = {
     else console.log(`[${ts()}] INFO  ${message}`, redact(meta));
   },
   warn(message: string, meta?: unknown): void {
+    if (QUIET) return;
     if (meta === undefined) console.warn(`[${ts()}] WARN  ${message}`);
     else console.warn(`[${ts()}] WARN  ${message}`, redact(meta));
   },
   error(message: string, meta?: unknown): void {
+    recentErrors.push({ at: Date.now(), message });
+    if (recentErrors.length > MAX_RECENT) recentErrors.shift();
     if (meta === undefined) console.error(`[${ts()}] ERROR ${message}`);
     else console.error(`[${ts()}] ERROR ${message}`, redact(meta));
   },

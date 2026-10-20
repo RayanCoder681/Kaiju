@@ -73,8 +73,30 @@ npm run migrate     # applique les migrations SQLite
 - [x] **Phase 3** — Temps réel : synchronisation des 3 surfaces (Socket.IO), minuteries à autorité
       serveur, visibilité des résultats, scores + classements individuel/équipe, pause/reprise,
       reconnexion, idempotence et refus des réponses tardives, Q&A en direct.
-- [ ] **Phase 4** — Résilience & sécurité : sauvegardes, limites, diagnostic, charge.
+- [x] **Phase 4** — Résilience & sécurité : sauvegardes (manuelles + auto) et métadonnées,
+      reprise après incident (clôture des minuteurs expirés), limites configurables, rate-limiting,
+      panneau diagnostic, test de charge ~40 participants simulés. Restauration : procédure manuelle (voir ci-dessous).
 - [ ] **Phase 5** — Compléments : bibliothèque, import/export, archivage, médias, rapports.
 - [ ] **Phase 6** — Livraison : docs, guide Windows, démo reproductible, rapport de tests.
+
+## Sauvegarde & restauration
+
+- Sauvegardes créées depuis la console (Diagnostic → « Sauvegarder maintenant ») ou automatiquement
+  toutes les `AUTO_BACKUP_MINUTES` minutes, dans `server/backups/` (copie SQLite cohérente + checksum).
+- **Restauration (manuelle, sûre)** : arrêter le serveur, remplacer `server/data/kaiju.sqlite`
+  par le fichier de sauvegarde voulu (renommé `kaiju.sqlite`), supprimer les fichiers `-wal`/`-shm`
+  résiduels, puis relancer. Au démarrage, toute activité dont le minuteur avait expiré est clôturée
+  (aucune réponse tardive acceptée) et les clients se resynchronisent.
+- Copier régulièrement le dossier `server/backups/` vers un emplacement externe : une sauvegarde
+  locale unique ne protège pas de toutes les pertes.
+
+## Performance mesurée
+
+Test de charge **simulé** sur une seule machine (`node scripts/loadtest.mjs --n 40`) :
+40/40 entrées et 40/40 soumissions acceptées ; latence d'entrée p50/p95 ≈ 86/100 ms,
+soumission p50/p95 ≈ 18/34 ms. **Ce n'est pas un essai LAN multi-appareils réel** — à mesurer
+sur le réseau cible avant d'annoncer une capacité. Le rate-limiter d'entrée est **par IP** :
+en LAN chaque appareil a sa propre IP ; une simulation depuis une seule machine doit relever
+`RATE_MAX_ACTIONS` pour ne pas être bridée.
 
 Aucun déploiement en ligne n'est effectué sans autorisation explicite.

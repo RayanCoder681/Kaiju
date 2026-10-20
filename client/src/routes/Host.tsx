@@ -4,6 +4,7 @@ import { useAuth } from '../lib/useAuth.js';
 import { Login } from './host/Login.js';
 import { Dashboard } from './host/Dashboard.js';
 import { SessionDetail } from './host/SessionDetail.js';
+import { Diagnostics } from './host/Diagnostics.js';
 
 /** Console organisateur : gating d'authentification + routage interne. */
 export function Host() {
@@ -22,6 +23,7 @@ export function Host() {
           element={<Dashboard organizerName={organizer?.displayName || organizer?.username || ''} />}
         />
         <Route path="sessions/:id" element={<SessionDetail />} />
+        <Route path="diagnostics" element={<Diagnostics />} />
       </Routes>
     );
   }

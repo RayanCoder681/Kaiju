@@ -15,6 +15,7 @@ export const Errors = {
   codeInvalid: () => new AppError(404, 'error.codeInvalid'),
   sessionClosed: () => new AppError(409, 'error.sessionClosed'),
   sessionNotStarted: () => new AppError(409, 'error.sessionNotStarted'),
+  sessionFull: () => new AppError(429, 'error.sessionFull'),
   sessionLocked: () => new AppError(423, 'error.sessionLocked'),
   notFound: () => new AppError(404, 'error.codeInvalid'),
   conflict: (key = 'error.validation') => new AppError(409, key),

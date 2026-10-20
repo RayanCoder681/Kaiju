@@ -2,6 +2,7 @@ import type { Repositories, ParticipantRow, SessionRow } from '../../db/reposito
 import { joinAllowedWhileActivity, type JoinRequest } from '@kaiju/shared';
 import { newId, newToken } from '../../lib/ids.js';
 import { Errors } from '../../lib/errors.js';
+import { config } from '../../config.js';
 
 export interface JoinResult {
   participantId: string;
@@ -62,6 +63,11 @@ export function joinSession(repos: Repositories, input: JoinRequest): JoinResult
   const locking = repos.sessionActivity.currentLocking(session.id);
   if (!joinAllowedWhileActivity(locking?.state ?? null)) {
     throw Errors.sessionLocked();
+  }
+
+  // Limite sûre de capacité (non désactivable par l'organisateur).
+  if (repos.participant.countBySession(session.id) >= config.limits.maxParticipantsPerSession) {
+    throw Errors.sessionFull();
   }
 
   const participant: ParticipantRow = {

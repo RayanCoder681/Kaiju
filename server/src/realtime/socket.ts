@@ -10,6 +10,7 @@ import {
 } from '@kaiju/shared';
 import { getRepositories } from '../context.js';
 import { getDb } from '../db/connection.js';
+import { actionLimiter } from '../lib/limiters.js';
 import { authenticate } from '../modules/auth/service.js';
 import {
   startActivity,
@@ -220,6 +221,7 @@ export function attachSocket(httpServer: HttpServer): KaijuIo {
       const pid = socket.data.participantId;
       const sessionId = socket.data.sessionId;
       if (!pid || !sessionId) return cb({ ok: false, errorKey: 'error.unauthorized' });
+      if (!actionLimiter.allow(pid)) return cb({ ok: false, errorKey: 'error.rateLimited' });
       const parsed = zSubmitQuizAnswer.safeParse(raw);
       if (!parsed.success) return cb({ ok: false, errorKey: 'error.validation' });
 
@@ -273,6 +275,7 @@ export function attachSocket(httpServer: HttpServer): KaijuIo {
       const pid = socket.data.participantId;
       const sessionId = socket.data.sessionId;
       if (!pid || !sessionId) return cb({ ok: false, errorKey: 'error.unauthorized' });
+      if (!actionLimiter.allow(pid)) return cb({ ok: false, errorKey: 'error.rateLimited' });
       const parsed = zSubmitQaQuestion.safeParse(raw);
       if (!parsed.success) return cb({ ok: false, errorKey: 'error.validation' });
       submitQuestion(getDb(), {

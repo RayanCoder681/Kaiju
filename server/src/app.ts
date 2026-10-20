@@ -11,6 +11,7 @@ import {
   sessionActivitiesRouter,
 } from './modules/activities/routes.js';
 import { teamsRouter } from './modules/teams/routes.js';
+import { maintenanceRouter } from './modules/maintenance/routes.js';
 
 /**
  * Fabrique l'application Express.
@@ -44,6 +45,7 @@ export function createApp(): Express {
   app.use('/api/sessions', sessionActivitiesRouter);
   app.use('/api/sessions', hostParticipantsRouter);
   app.use('/api/sessions', teamsRouter);
+  app.use('/api/maintenance', maintenanceRouter);
 
   // Service du client compilé (parcours local-first mono-port).
   // En développement, le client tourne sur Vite ; en production/démo, il est servi ici.

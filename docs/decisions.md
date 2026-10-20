@@ -68,3 +68,15 @@ Chaque entrée : contexte → décision → conséquence.
 - **Contexte** : synchroniser 3 surfaces, garantir délais, idempotence, visibilité et refus des réponses tardives.
 - **Décision** : moteur pur et testable (`realtime/engine.ts`) — démarrage/clôture, horloge (`tickActivity`), scoring, agrégation, classements — piloté par une couche Socket.IO fine (`realtime/socket.ts`). Salles par surface (`host:` / `part:` / `proj:`) pour isoler les résultats non publiés. Horloge globale (1 s) qui bascule countdown→running→closed à l'échéance officielle. Soumissions revalidées Zod, persistées AVANT accusé, uniques par (activité, participant) ; réponse tardive refusée même après reconnexion.
 - **Conséquence** : le client n'a aucune autorité ; la logique est testée unitairement (moteur) et sur le fil (socket.io-client). La visibilité des corrigés est strictement contrôlée par salle.
+
+## ADR-012 — Résilience : persistance + reprise + sauvegardes
+
+- **Contexte** : fiabilité locale, reprise après redémarrage, politique de minuteur expiré pendant un incident.
+- **Décision** : persistance transactionnelle SQLite (WAL) = source de vérité ; les sauvegardes (copie en ligne `better-sqlite3 .backup()`, manuelles + auto) en sont un complément, pas un remplacement. Au démarrage, `recoverStaleActivities` clôture toute activité dont le minuteur a expiré (aucune réponse tardive). Restauration = procédure manuelle documentée (remplacement du fichier + redémarrage) pour éviter un échange à chaud risqué.
+- **Conséquence** : l'état survit aux redémarrages ; politique de reprise explicite et testée. Un échange de base à chaud reste hors MVP.
+
+## ADR-013 — Limites sûres & rate-limiting en mémoire
+
+- **Contexte** : protéger les actions exposées aux participants sans sur-ingénierie ni dépendance (Redis).
+- **Décision** : limites configurables par variables d'environnement (capacité par session non désactivable par l'organisateur, tailles, quotas) ; rate-limiter à fenêtre glissante en mémoire, par IP pour l'entrée et par participant pour les soumissions/votes.
+- **Conséquence** : protection proportionnée et locale. Le limiteur d'entrée est par IP : en LAN chaque appareil a une IP distincte ; une charge simulée mono-machine doit relever le quota.

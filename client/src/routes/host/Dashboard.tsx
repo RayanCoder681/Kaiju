@@ -47,7 +47,15 @@ export function Dashboard({ organizerName }: { organizerName: string }) {
           <h1 className="font-display text-2xl font-bold tracking-tight">Bonjour {organizerName}</h1>
           <p className="text-sm text-muted">Vos sessions interactives</p>
         </div>
-        <LogoutButton />
+        <div className="flex gap-2">
+          <Link
+            to="/host/diagnostics"
+            className="rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-fg transition-colors hover:bg-surface-elevated"
+          >
+            Diagnostic
+          </Link>
+          <LogoutButton />
+        </div>
       </div>
 
       <Card className="mb-8">

@@ -3,6 +3,8 @@ import { zJoinRequest, zSessionCode } from '@kaiju/shared';
 import { getRepositories } from '../../context.js';
 import { handle, parseBody } from '../../middleware/handle.js';
 import { requireHost } from '../../middleware/requireHost.js';
+import { Errors } from '../../lib/errors.js';
+import { joinLimiter } from '../../lib/limiters.js';
 import { joinPreview, joinSession } from './service.js';
 
 /** Routes publiques participant (aucune authentification). */
@@ -19,6 +21,7 @@ joinRouter.get(
 joinRouter.post(
   '/',
   handle((req, res) => {
+    if (!joinLimiter.allow(req.ip ?? 'unknown')) throw Errors.rateLimited();
     const input = parseBody(zJoinRequest, req.body);
     const result = joinSession(getRepositories(), input);
     res.json({ ok: true, ...result });

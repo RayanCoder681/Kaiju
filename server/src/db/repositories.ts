@@ -315,6 +315,12 @@ export function makeRepositories(db: Database.Database) {
           .get(sessionId) as { maxPos: number };
         return row.maxPos + 1;
       },
+      /** Toutes les activités en décompte ou en cours (reprise après incident). */
+      listActive(): SessionActivityRow[] {
+        return db
+          .prepare("SELECT * FROM session_activity WHERE state IN ('countdown','running')")
+          .all() as SessionActivityRow[];
+      },
       /** Sessions ayant une activité en décompte ou en cours (pour l'horloge globale). */
       activeSessionIds(): string[] {
         const rows = db
