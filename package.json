@@ -20,6 +20,7 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "migrate": "npm run migrate --workspace @kaiju/server",
+    "seed:demo": "npm run seed:demo --workspace @kaiju/server",
     "dev:server": "npm run dev --workspace @kaiju/server",
     "dev:client": "npm run dev --workspace @kaiju/client",
     "start": "node scripts/start.mjs"

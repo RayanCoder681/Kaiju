@@ -22,6 +22,19 @@ sans compte ni installation.
 
 Monorepo npm workspaces : `packages/shared` (types/contrats/thème/i18n), `server`, `client`.
 
+## Documentation
+
+- [`docs/guide-windows.md`](docs/guide-windows.md) — installation, lancement, pare-feu, Wi-Fi, hors ligne
+- [`docs/demo.md`](docs/demo.md) — scénario de démonstration + checklist d'acceptation
+- [`docs/api.md`](docs/api.md) — API REST et événements Socket.IO
+- [`docs/schema.md`](docs/schema.md) — schéma de base et migrations
+- [`docs/exploitation.md`](docs/exploitation.md) — sauvegarde, restauration, transfert, mise à jour
+- [`docs/rapport-tests.md`](docs/rapport-tests.md) — rapport de tests
+- [`docs/completude.md`](docs/completude.md) — état de complétude des fonctionnalités
+- [`docs/deploiement.md`](docs/deploiement.md) — préparation au déploiement (non exécuté)
+- [`docs/contribution.md`](docs/contribution.md) — guide de contribution
+- [`docs/decisions.md`](docs/decisions.md) — décisions techniques (ADR)
+
 ## Prérequis
 
 - **Node.js 20 ou 22** (voir `.nvmrc`).
@@ -61,6 +74,7 @@ npm run typecheck   # types (shared + server + client)
 npm run build       # build complet
 npm test            # tests unitaires et d'intégration
 npm run migrate     # applique les migrations SQLite
+npm run seed:demo   # données de démonstration [DÉMO] (optionnel)
 ```
 
 ## Avancement
@@ -79,6 +93,9 @@ npm run migrate     # applique les migrations SQLite
 - [x] **Phase 5** — Compléments : éditeur quiz/sondage/Q&A complet, bibliothèque (recherche, duplication,
       import/export JSON validé), export CSV/JSON des résultats, rapport de session, upload de médias
       (validation du type réel par signature).
+- [x] **Phase 6** — Livraison : documentation complète (Windows, API, schéma, exploitation, démo,
+      contribution), données de démo reproductibles, rapport de tests, liste de complétude,
+      préparation de déploiement (non exécuté).
 - [ ] **Phase 6** — Livraison : docs, guide Windows, démo reproductible, rapport de tests.
 
 ## Sauvegarde & restauration
