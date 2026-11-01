@@ -44,7 +44,7 @@ Légende : ✅ terminé et vérifié · 🟡 partiel · ⬜ absent (prévu plus 
 | Import/export JSON d'activités | ✅ | validé, rapport par ligne |
 | Export CSV / bundle JSON des résultats | ✅ | |
 | Rapport de session | ✅ | |
-| Médias locaux (upload, type réel vérifié) | ✅ | insertion dans les activités : à câbler dans l'éditeur |
+| Médias locaux (upload, type réel vérifié) | 🟡 | upload validé côté serveur ; insertion dans les activités à câbler dans l'éditeur |
 | Thème clair + sombre (noir-ardoise) | ✅ | bascule + persistance locale |
 | i18n FR/EN | ✅ | interface ; contenu d'activité indépendant |
 | Historique / archivage de sessions | 🟡 | liste des sessions ; archivage/restauration UI à étoffer |
@@ -53,7 +53,7 @@ Légende : ✅ terminé et vérifié · 🟡 partiel · ⬜ absent (prévu plus 
 
 | Élément | État |
 |---|---|
-| Insertion d'images dans l'éditeur d'activité (back prêt) | ⬜ |
+| Insertion d'images dans l'éditeur d'activité (back prêt) | 🟡 |
 | Scores d'équipe avancés, podium animé | ⬜ |
 | Personnalisation fine des thèmes (couleurs/arrière-plans) | ⬜ |
 | Tableau de bord analytique multi-conférences | ⬜ (exclu du MVP par cahier) |

@@ -5,9 +5,8 @@ cours et ateliers. **Local-first** : le serveur tourne sur l'ordinateur de l'org
 les participants rejoignent depuis leur smartphone via le réseau local (code court ou QR),
 sans compte ni installation.
 
-> État : **Phase 1 — Fondations** (socle technique en place). Voir
-> [`docs/decisions.md`](docs/decisions.md) pour les choix techniques et la section
-> « Avancement » plus bas.
+> État : **Version de démonstration — MVP local-first**. Les fonctions partielles et les limites
+> connues sont détaillées dans [`docs/completude.md`](docs/completude.md).
 
 ## Stack
 
@@ -93,10 +92,9 @@ npm run seed:demo   # données de démonstration [DÉMO] (optionnel)
 - [x] **Phase 5** — Compléments : éditeur quiz/sondage/Q&A complet, bibliothèque (recherche, duplication,
       import/export JSON validé), export CSV/JSON des résultats, rapport de session, upload de médias
       (validation du type réel par signature).
-- [x] **Phase 6** — Livraison : documentation complète (Windows, API, schéma, exploitation, démo,
-      contribution), données de démo reproductibles, rapport de tests, liste de complétude,
-      préparation de déploiement (non exécuté).
-- [ ] **Phase 6** — Livraison : docs, guide Windows, démo reproductible, rapport de tests.
+- [x] **Phase 6** — Livraison : documentation Windows/API/exploitation, scénario de démo,
+      données de démonstration, rapport de tests, liste de complétude. Le déploiement en ligne
+      reste hors périmètre et n'a pas été exécuté.
 
 ## Sauvegarde & restauration
 

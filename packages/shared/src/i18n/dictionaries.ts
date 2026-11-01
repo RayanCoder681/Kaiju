@@ -9,6 +9,11 @@ export const DICTIONARIES = {
   fr: {
     'app.name': 'Kaiju',
     'app.tagline': "Participation en direct pour vos amphis et ateliers",
+    'landing.headlineFirst': 'Ensemble,',
+    'landing.headlineSecond': 'en direct.',
+    'landing.organizerLabel': 'Côté organisation',
+    'landing.organizerTitle': 'Vous organisez ?',
+    'landing.organizerAction': 'Ouvrir la console',
 
     'common.join': 'Rejoindre',
     'common.cancel': 'Annuler',
@@ -59,6 +64,11 @@ export const DICTIONARIES = {
   en: {
     'app.name': 'Kaiju',
     'app.tagline': 'Live participation for your lectures and workshops',
+    'landing.headlineFirst': 'Together,',
+    'landing.headlineSecond': 'live.',
+    'landing.organizerLabel': 'For organizers',
+    'landing.organizerTitle': 'Hosting a session?',
+    'landing.organizerAction': 'Open the console',
 
     'common.join': 'Join',
     'common.cancel': 'Cancel',

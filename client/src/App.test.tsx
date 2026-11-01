@@ -7,5 +7,9 @@ describe('App', () => {
     render(<App />);
     expect(screen.getAllByText('Kaiju').length).toBeGreaterThan(0);
     expect(screen.getByLabelText(/code de la session/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /ouvrir la console/i })).toHaveAttribute(
+      'href',
+      '/host',
+    );
   });
 });

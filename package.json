@@ -5,7 +5,7 @@
   "description": "Kaiju — application web de participation interactive en temps réel pour conférences, cours et ateliers (local-first).",
   "license": "UNLICENSED",
   "engines": {
-    "node": ">=20.11.0"
+    "node": "^20.11.0 || ^22.0.0"
   },
   "workspaces": [
     "packages/shared",
@@ -27,5 +27,8 @@
   },
   "devDependencies": {
     "typescript": "5.7.3"
+  },
+  "allowScripts": {
+    "better-sqlite3@11.8.1": true
   }
 }
